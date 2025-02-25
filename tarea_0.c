@@ -2,13 +2,48 @@
 #include <cairo.h>
 #include <math.h>
 
-gboolean dibujar_circulo(GtkWidget *area, cairo_t *cr, gpointer user_data) {
-    gint width = gtk_widget_get_allocated_width(area);
-    gint height = gtk_widget_get_allocated_height(area);
-    // Draw a circle centered in the area, filling it as much as possible
+#define PI 3.14159265358979323846
+
+// Variables globales para almacenar los datos de los rayos
+int N = 8;  // Cantidad de rayos (mínimo 4)
+int k = 8;  // Cantidad de datos (mínimo 4)
+int D[] = {1, 2, 3, 4, 5, 6, 7, 8};  // Datos de prueba
+
+// Callback para dibujar los rayos en la interfaz
+gboolean dibujar_area(GtkWidget *area, cairo_t *cr, gpointer user_data) {
+    int i;
+    
+    // Obtener el centro del área de dibujo
+    int xc = gtk_widget_get_allocated_width(area) / 2;
+    int yc = gtk_widget_get_allocated_height(area) / 2;
+    int R = MIN(xc, yc);    // Radio del círculo
+    
+    // Limpiar el área de dibujo (fondo blanco)
+    cairo_set_source_rgb(cr, 1, 1, 1);
+    cairo_paint(cr);
+
+    // Dibujar círculo guía
     cairo_set_source_rgb(cr, 0.6, 0.6, 0.6);
-    cairo_arc(cr, width / 2.0, height / 2.0, MIN(width, height) / 2.0, 0, 2 * M_PI);
-    cairo_fill(cr);
+    cairo_arc(cr, xc, yc, R, 0, 2 * PI);
+    cairo_stroke(cr);
+
+    // Configurar color y grosor de las líneas
+    cairo_set_source_rgb(cr, 0, 0, 0);
+    cairo_set_line_width(cr, 2);
+
+    // Dibujar los rayos desde el centro
+    for (i = 0; i < k; i++) {
+        double angle = (i / (double)N) * 2 * PI;  // Ángulo en radianes
+        double length = (D[i] / (double)k) * R;   // Longitud proporcional
+
+        double x_end = xc + length * cos(angle);
+        double y_end = yc - length * sin(angle);  // Negativo porque Y crece hacia abajo en GTK
+
+        cairo_move_to(cr, xc, yc);
+        cairo_line_to(cr, x_end, y_end);
+        cairo_stroke(cr);
+    }
+
     return FALSE;
 }
 
@@ -44,7 +79,7 @@ int main(int argc, char *argv[]) {
 
     // El área de dibujo
     area_circulo = GTK_WIDGET(gtk_builder_get_object(builder, "area_circulo"));
-    g_signal_connect(area_circulo, "draw", G_CALLBACK(dibujar_circulo), NULL);
+    g_signal_connect(area_circulo, "draw", G_CALLBACK(dibujar_area), NULL);
 
     // El bóton de terminación del programa
     boton_salida = GTK_WIDGET(gtk_builder_get_object(builder, "boton_terminar"));
