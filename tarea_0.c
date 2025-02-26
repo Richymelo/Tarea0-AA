@@ -24,9 +24,19 @@ void desplegar_datos(GtkButton *button, gpointer user_data) {
     GtkWidget *cantidad_datos = GTK_WIDGET(gtk_builder_get_object(builder, "cantidad_datos"));
     int k = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(cantidad_datos));
 
+    GdkRGBA color_1;
+    GtkWidget *primer_color = GTK_WIDGET(gtk_builder_get_object(builder, "color_1"));
+    gtk_color_chooser_get_rgba(GTK_COLOR_CHOOSER(primer_color), &color_1);
+
+    GdkRGBA color_2;
+    GtkWidget *segundo_color = GTK_WIDGET(gtk_builder_get_object(builder, "color_2"));
+    gtk_color_chooser_get_rgba(GTK_COLOR_CHOOSER(segundo_color), &color_2);
+
     // Datos globales del usuario
     datos_global.N = N;
     datos_global.k = k;
+    datos_global.color_1 = color_1;
+    datos_global.color_2 = color_2;
     
     // Limpiar memoria si ya había un vector
     if (datos_global.D != NULL) {
@@ -97,9 +107,11 @@ int main(int argc, char *argv[]) {
     GtkWidget *area_circulo;    // El área donde se dibuja el círculo
     GtkWidget *panel;           // El panel que divide el área de dibujo y el área de interacción
     GtkWidget *boton_salida;    // Botón para terminar el programa
-    GtkWidget *boton_desplegar;   // Botón para barajar y mostrar los datos
-    GtkWidget *cantidad_rayos;   // Espacio para ingresar cantidad de rayos N
+    GtkWidget *boton_desplegar; // Botón para barajar y mostrar los datos
+    GtkWidget *cantidad_rayos;  // Espacio para ingresar cantidad de rayos N
     GtkWidget *cantidad_datos;  // Espacio para ingresar la cantidad de datos k
+    GtkWidget *color_1;         // Primer color escogido
+    GtkWidget *color_2;         // Segundo color escogido
 
     gtk_init(&argc, &argv);
 

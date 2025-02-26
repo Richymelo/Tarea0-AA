@@ -39,6 +39,25 @@
             <property name="can-focus">False</property>
             <property name="orientation">vertical</property>
             <child>
+              <object class="GtkLabel" id="titulo">
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
+                <property name="margin-top">50</property>
+                <property name="margin-bottom">50</property>
+                <property name="label" translatable="yes">Rayos Desordenados</property>
+                <attributes>
+                  <attribute name="font-desc" value="Sans Bold 10"/>
+                  <attribute name="variant" value="small-caps"/>
+                  <attribute name="scale" value="2"/>
+                </attributes>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
               <object class="GtkBox">
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
@@ -61,6 +80,8 @@
                   <object class="GtkSpinButton" id="cantidad_rayos">
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
+                    <property name="margin-left">50</property>
+                    <property name="margin-right">50</property>
                     <property name="text" translatable="yes">numero mayor a 4</property>
                     <property name="caps-lock-warning">False</property>
                     <property name="placeholder-text" translatable="yes">Ingresar un número</property>
@@ -78,7 +99,7 @@
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">True</property>
-                <property name="position">0</property>
+                <property name="position">1</property>
               </packing>
             </child>
             <child>
@@ -104,6 +125,8 @@
                   <object class="GtkSpinButton" id="cantidad_datos">
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
+                    <property name="margin-left">50</property>
+                    <property name="margin-right">50</property>
                     <property name="activates-default">True</property>
                     <property name="caps-lock-warning">False</property>
                     <property name="placeholder-text" translatable="yes">Ingresar un número</property>
@@ -121,7 +144,66 @@
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">True</property>
-                <property name="position">1</property>
+                <property name="position">2</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkBox">
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
+                <property name="orientation">vertical</property>
+                <child>
+                  <object class="GtkLabel" id="instruccion_colores">
+                    <property name="visible">True</property>
+                    <property name="can-focus">False</property>
+                    <property name="margin-top">50</property>
+                    <property name="margin-bottom">20</property>
+                    <property name="label" translatable="yes">Escoja dos colores:</property>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">0</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkColorButton" id="color_1">
+                    <property name="visible">True</property>
+                    <property name="can-focus">True</property>
+                    <property name="receives-default">True</property>
+                    <property name="margin-left">210</property>
+                    <property name="margin-right">200</property>
+                    <property name="title" translatable="yes">Escoja un color</property>
+                    <property name="color">#000000000000</property>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">1</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkColorButton" id="color_2">
+                    <property name="visible">True</property>
+                    <property name="can-focus">True</property>
+                    <property name="receives-default">True</property>
+                    <property name="margin-left">210</property>
+                    <property name="margin-right">200</property>
+                    <property name="margin-top">20</property>
+                    <property name="title" translatable="yes">Escoja un color</property>
+                    <property name="color">#000000000000</property>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">2</property>
+                  </packing>
+                </child>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">3</property>
               </packing>
             </child>
             <child>
@@ -138,11 +220,8 @@
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">True</property>
-                <property name="position">2</property>
+                <property name="position">4</property>
               </packing>
-            </child>
-            <child>
-              <placeholder/>
             </child>
             <child>
               <object class="GtkButton" id="boton_terminar">
@@ -158,7 +237,7 @@
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">False</property>
-                <property name="position">4</property>
+                <property name="position">5</property>
               </packing>
             </child>
           </object>
