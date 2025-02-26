@@ -1,6 +1,8 @@
 #include <gtk/gtk.h>
 #include <cairo.h>
-#include <math.h>
+#include <math.h>     // Para calcular los rayos
+#include <stdlib.h>  // Para utilizar rand()
+#include <time.h>    // Para utilizar rand()
 #include "Datos_usuario.h"
 
 #define PI 3.14159265358979323846
@@ -11,6 +13,20 @@ void fijar_panel(GtkPaned *panel, GParamSpec *pspec, gpointer user_data) {
     int current_pos = gtk_paned_get_position(panel);
     if (current_pos != pos_fijada) {
         gtk_paned_set_position(panel, pos_fijada);
+    }
+}
+// Barajar datos de un vector (con el algoritmo de Fisher-Yates o Knuth)
+void barajar_datos(int *datos, int size) {
+    // Si el vector es de 1 solo valor o menos
+    if (datos == NULL || size <= 1) return; 
+
+    for (int i = size - 1; i > 0; i--) {
+        // Se escoge una posición aleatoria
+        int j = rand() % (i + 1);
+        // Se cambian de posición el valor en la posición aleatoria y el de la posición actual
+        int temp = datos[i];
+        datos[i] = datos[j];
+        datos[j] = temp;
     }
 }
 // Obtener datos
@@ -56,6 +72,7 @@ void desplegar_datos(GtkButton *button, gpointer user_data) {
     for (int i = 0; i < k; i++) {
         datos_global.D[i] = i + 1;  // Llenar el vector con datos desde 1 hasta k
     }
+    barajar_datos(datos_global.D, k);   // Cambiar de orden los valores en el vector
     
     // Volver a dibujar el círculo, esta vez con los rayos
     GtkWidget *area_circulo = GTK_WIDGET(gtk_builder_get_object(builder, "area_circulo"));
@@ -113,6 +130,7 @@ int main(int argc, char *argv[]) {
     GtkWidget *color_1;         // Primer color escogido
     GtkWidget *color_2;         // Segundo color escogido
 
+    srand(time(NULL));  // Para poder utilizar rand() al barajar los números
     gtk_init(&argc, &argv);
 
     // Cargar la interfaz de Glade
