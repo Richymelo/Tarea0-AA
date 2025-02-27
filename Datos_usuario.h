@@ -6,5 +6,8 @@ typedef struct {
     GdkRGBA color_1;  // Primer color elegido
     GdkRGBA color_2;  // Segundo color elegido
 } DatosUsuario;
-// Hacer la estructura global para poder cambiar los datos
-DatosUsuario datos_global = { NULL, 0, 0, {0, 0, 0, 1}, {0, 0, 0, 1} };
+// Estructura que guarda los datos del usuario y los del builder
+typedef struct {
+    GtkBuilder *builder;
+    DatosUsuario *datos;
+} AppData;
