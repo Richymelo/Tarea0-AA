@@ -1,3 +1,16 @@
+/*
+                Tarea 0: Rayos Desordenados
+                Hecha por: Carmen Hidalgo Paz, Jorge Guevara Chavarría y Ricardo Castro Jiménez
+                Fecha: Jueves 27 de febrero del 2025
+
+                Esta sección contiene el main, donde se indica lo que tiene que hacer
+                cada objeto mostrado en la interfaz. Además, hay una función que muestra los
+                rayos y el círculo editado con los valores que ingresa el usuario.
+                Estas ediciones del usuario son guardadas en otra función llamada desplegar_datos.
+                El resto de funciones barajan los datos del vector D o afectan la visualización
+                de la interfaz.
+*/
+
 #include <gtk/gtk.h>
 #include <cairo.h>
 #include <math.h>     // Para calcular los rayos
@@ -31,9 +44,9 @@ void barajar_datos(int *datos, int size) {
 }
 // Obtener datos
 void desplegar_datos(GtkButton *button, gpointer user_data) {
-    AppData *app_data = (AppData *)user_data;
-    GtkBuilder *builder = app_data->builder;
-    DatosUsuario *datos = app_data->datos;
+    DatosGenerales *general = (DatosGenerales *)user_data;
+    GtkBuilder *builder = general->builder;
+    DatosUsuario *datos = general->datos;
 
     // Número de rayos ingresados por el usuario
     GtkWidget *cantidad_rayos = GTK_WIDGET(gtk_builder_get_object(builder, "cantidad_rayos"));
@@ -41,16 +54,16 @@ void desplegar_datos(GtkButton *button, gpointer user_data) {
     // Cantidad de datos ingresados por el usuario
     GtkWidget *cantidad_datos = GTK_WIDGET(gtk_builder_get_object(builder, "cantidad_datos"));
     int k = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(cantidad_datos));
-
+    // Se guarda el primer color escogido
     GdkRGBA color_1;
     GtkWidget *primer_color = GTK_WIDGET(gtk_builder_get_object(builder, "color_1"));
     gtk_color_chooser_get_rgba(GTK_COLOR_CHOOSER(primer_color), &color_1);
-
+    // Se guarda el segundo color escogido
     GdkRGBA color_2;
     GtkWidget *segundo_color = GTK_WIDGET(gtk_builder_get_object(builder, "color_2"));
     gtk_color_chooser_get_rgba(GTK_COLOR_CHOOSER(segundo_color), &color_2);
 
-    // Datos globales del usuario
+    // Datos del usuario
     datos->N = N;
     datos->k = k;
     datos->color_1 = color_1;
@@ -60,7 +73,6 @@ void desplegar_datos(GtkButton *button, gpointer user_data) {
     if (datos->D != NULL) {
         free(datos->D);
     }
-    
     // Crear un vector con k espacios en memoria dinámica
     datos->D = malloc(sizeof(int) * k);
     // Si el número ingresado es muy grande
@@ -80,6 +92,7 @@ void desplegar_datos(GtkButton *button, gpointer user_data) {
     GtkWidget *area_circulo = GTK_WIDGET(gtk_builder_get_object(builder, "area_circulo"));
     gtk_widget_queue_draw(area_circulo);
 }
+// Crea la lista de colores que va a corresponder a los rayos
 void colorLinea(int *D, int cElementosV, int color1[3], int color2[3], int colores[][3]) {
 	for (int i = 0; i < cElementosV; i++) {
 		for (int j = 0; j < 3; j++) {
@@ -125,12 +138,10 @@ gboolean dibujar_area(GtkWidget *area, cairo_t *cr, gpointer user_data) {
             (int)(datos->color_2.green * 255),
             (int)(datos->color_2.blue * 255)
         };
-
         // Arreglo con los colores para todas los rayos
         int colores[datos->k][3];
         // Función que llena el arreglo con colores
         colorLinea(datos->D, datos->k, color1, color2, colores);
-
         // Dibujar los rayos desde el centro
         for (int i = 0; i < k; i++) {
             double angle = (i / (double)N) * 2 * PI;    // Ángulo en radianes
@@ -170,47 +181,44 @@ int main(int argc, char *argv[]) {
     // Cargar la interfaz de Glade
     builder = gtk_builder_new_from_file("interfaz.glade");
 
+    // Se asigna memoria para la estructura de DatosUsuario
     DatosUsuario *datos = malloc(sizeof(DatosUsuario));
     if (!datos) {
-        fprintf(stderr, "Memory allocation failed!\n");
+        fprintf(stderr, "No se pudo asignar memoria dinámica.\n");
         return EXIT_FAILURE;
     }
+    // Se guardan valores en las variables
     datos->D = NULL;
     datos->N = 0;
     datos->k = 0;
     datos->color_1 = (GdkRGBA){0, 0, 0, 1};
     datos->color_2 = (GdkRGBA){0, 0, 0, 1};
 
-    // Allocate memory for AppData
-    AppData *app_data = malloc(sizeof(AppData));
-    if (!app_data) {
-        fprintf(stderr, "Memory allocation failed!\n");
+    // Se asigna memoria para la estructura de DatosGenerales
+    DatosGenerales *general = malloc(sizeof(DatosGenerales));
+    if (!general) {
+        fprintf(stderr, "No se pudo asignar memoria dinámica.\n");
         free(datos);
         return EXIT_FAILURE;
     }
-    app_data->builder = builder;
-    app_data->datos = datos;
+    general->builder = builder;
+    general->datos = datos;
 
     // La ventana
     ventana = GTK_WIDGET(gtk_builder_get_object(builder, "ventana"));
     g_signal_connect(ventana, "destroy", G_CALLBACK(gtk_main_quit), NULL);
-
     // El panel divisor
     panel = GTK_WIDGET(gtk_builder_get_object(builder, "division"));
     g_signal_connect(panel, "notify::position", G_CALLBACK(fijar_panel), NULL);
-
     // El círculo
     area_circulo = GTK_WIDGET(gtk_builder_get_object(builder, "area_circulo"));
     g_signal_connect(area_circulo, "draw", G_CALLBACK(dibujar_area), datos);
-
     // Botón de desplegar los datos del usuario
     boton_desplegar = GTK_WIDGET(gtk_builder_get_object(builder, "boton_desplegar"));
-    g_signal_connect(boton_desplegar, "clicked", G_CALLBACK(desplegar_datos), app_data);
-
+    g_signal_connect(boton_desplegar, "clicked", G_CALLBACK(desplegar_datos), general);
     // El bóton de terminación del programa
     boton_salida = GTK_WIDGET(gtk_builder_get_object(builder, "boton_terminar"));
     g_signal_connect(boton_salida, "clicked", G_CALLBACK(gtk_main_quit), NULL);
-
     // Mostrar ventana
     gtk_widget_show_all(ventana);
     // Que la ventana utilize toda la pantalla
@@ -224,7 +232,7 @@ int main(int argc, char *argv[]) {
         free(datos->D);
     }
     free(datos);
-    free(app_data);
+    free(general);
     g_object_unref(builder);
 
     return 0;
